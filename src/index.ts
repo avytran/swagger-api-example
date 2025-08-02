@@ -1,30 +1,28 @@
-import express from 'express';
-import userRoutes from './routes/user.route';
-import swaggerUi from 'swagger-ui-express';
+import express from "express";
+import userRoutes from "./routes/user.route";
+import swaggerUi from "swagger-ui-express";
 import YAML from "yaml";
 import fs from "fs";
 import path from "path";
 
+const app = express();
+
 const CSS_URL =
   "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
 
-const app = express();
-const port = 8080;
-
+// ✅ Đọc file YAML spec
 const filePath = path.join(process.cwd(), "src/learn-swagger.yaml");
 const swaggerDocument = YAML.parse(fs.readFileSync(filePath, "utf8"));
 
-app.use(express.json());
-app.use('/api/users', userRoutes);
+// ✅ Setup Swagger UI (chỉ gọi 1 lần)
 app.use(
   "/api-docs",
   swaggerUi.serve,
   swaggerUi.setup(swaggerDocument, { customCssUrl: CSS_URL })
 );
 
-
-app.listen(port, () => {
-  console.log(`🚀 Server running on http://localhost:${port}`);
-});
+// ✅ Routes API
+app.use(express.json());
+app.use("/api/users", userRoutes);
 
 export default app;
