@@ -1,38 +1,30 @@
-import express from "express";
-import userRoutes from "./routes/user.route.js"; // nhớ thêm .js nếu là module
-import swaggerUi from "swagger-ui-express";
+import express from 'express';
+import userRoutes from './routes/user.route';
+import swaggerUi from 'swagger-ui-express';
 import YAML from "yaml";
 import fs from "fs";
 import path from "path";
-import swaggerUiDist from "swagger-ui-dist";
+
+const CSS_URL =
+  "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
 
 const app = express();
+const port = 8080;
 
-// ✅ Đọc file YAML spec
-const filePath = path.join(process.cwd(), "src/learn-swagger.yaml");
+const filePath = path.join(__dirname, "learn-swagger.yaml");
 const swaggerDocument = YAML.parse(fs.readFileSync(filePath, "utf8"));
 
-// ✅ Serve static file của Swagger UI
-app.use("/api-docs", express.static(swaggerUiDist.getAbsoluteFSPath()));
-
-// ✅ Setup Swagger UI, fetch spec từ endpoint riêng
+app.use(express.json());
+app.use('/api/users', userRoutes);
 app.use(
   "/api-docs",
   swaggerUi.serve,
-  swaggerUi.setup(null, {
-    swaggerOptions: { url: "/swagger.yaml" },
-  })
+  swaggerUi.setup(swaggerDocument, { customCssUrl: CSS_URL })
 );
 
-// ✅ Endpoint trả YAML spec
-app.get("/swagger.yaml", (req, res) => {
-  res.sendFile(filePath);
+
+app.listen(port, () => {
+  console.log(`🚀 Server running on http://localhost:${port}`);
 });
-
-app.use(express.json());
-app.use("/api/users", userRoutes);
-
-// ❌ Không dùng app.listen() trên Vercel
-// app.listen(port, () => console.log(`Server running`));
 
 export default app;
