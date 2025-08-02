@@ -1,9 +1,10 @@
 import express from "express";
-import userRoutes from "./routes/user.route";
+import userRoutes from "./routes/user.route.js";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yaml";
 import fs from "fs";
 import path from "path";
+import swaggerUiDist from "swagger-ui-dist";
 
 const app = express();
 
@@ -14,14 +15,24 @@ const CSS_URL =
 const filePath = path.join(process.cwd(), "src/learn-swagger.yaml");
 const swaggerDocument = YAML.parse(fs.readFileSync(filePath, "utf8"));
 
-// ✅ Setup Swagger UI (chỉ gọi 1 lần)
+// ✅ Serve static file của Swagger UI
+app.use("/api-docs", express.static(swaggerUiDist.getAbsoluteFSPath()));
+
+// ✅ Setup Swagger UI + CSS + fetch spec từ endpoint riêng
 app.use(
   "/api-docs",
   swaggerUi.serve,
-  swaggerUi.setup(swaggerDocument, { customCssUrl: CSS_URL })
+  swaggerUi.setup(null, {
+    swaggerOptions: { url: "/swagger.yaml" },
+    customCssUrl: CSS_URL, // 🔥 Thêm dòng này
+  })
 );
 
-// ✅ Routes API
+// ✅ Endpoint trả YAML spec
+app.get("/swagger.yaml", (req, res) => {
+  res.sendFile(filePath);
+});
+
 app.use(express.json());
 app.use("/api/users", userRoutes);
 
