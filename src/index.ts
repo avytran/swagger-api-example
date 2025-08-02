@@ -8,9 +8,6 @@ import swaggerUiDist from "swagger-ui-dist";
 
 const app = express();
 
-const CSS_URL =
-  "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
-
 // ✅ Đọc file YAML spec
 const filePath = path.join(process.cwd(), "src/learn-swagger.yaml");
 const swaggerDocument = YAML.parse(fs.readFileSync(filePath, "utf8"));
@@ -24,10 +21,9 @@ app.use(
   swaggerUi.serve,
   swaggerUi.setup(null, {
     swaggerOptions: { url: "/swagger.yaml" },
-    customCssUrl: CSS_URL, // 🔥 Thêm dòng này
+    customCssUrl: "https://unpkg.com/swagger-ui-dist/swagger-ui.css", // Dùng bản khớp với JS
   })
 );
-
 // ✅ Endpoint trả YAML spec
 app.get("/swagger.yaml", (req, res) => {
   res.sendFile(filePath);
