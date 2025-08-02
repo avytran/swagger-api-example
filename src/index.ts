@@ -9,7 +9,7 @@ const app = express();
 const port = 8080;
 
 // Load YAML (dùng __dirname vì khi deploy Vercel sẽ copy file sang thư mục riêng)
-const filePath = path.join(__dirname, "learn-swagger.yaml");
+const filePath = path.join(process.cwd(), "src/learn-swagger.yaml");
 const swaggerDocument = YAML.parse(fs.readFileSync(filePath, "utf8"));
 
 app.use(express.json());
