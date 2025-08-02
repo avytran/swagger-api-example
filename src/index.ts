@@ -11,7 +11,7 @@ const CSS_URL =
 const app = express();
 const port = 8080;
 
-const filePath = path.join(__dirname, "learn-swagger.yaml");
+const filePath = path.join(process.cwd(), "src/learn-swagger.yaml");
 const swaggerDocument = YAML.parse(fs.readFileSync(filePath, "utf8"));
 
 app.use(express.json());
