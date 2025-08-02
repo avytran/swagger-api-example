@@ -9,7 +9,7 @@
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "src/index.ts"
+            "dest": "/$1"
         }
     ],
     "buildCommand": "npm run build",
